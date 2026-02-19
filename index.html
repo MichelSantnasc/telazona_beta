@@ -14,22 +14,128 @@
   <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-
   <style>
-    :root {
-      --bg: #0a0a0a;
-      --bg2: #1a1a1a;
-      --border: #333;
-      --text: #fff;
-      --text2: #aaa;
-      --accent: #00d084;
-      --accent2: #a855f7;
-      --radius: 12px;
-      --header-h: 70px;
-      --footer-h: 40px;
-      --chat-w: 320px;
-      --transparent-bg: rgba(10, 10, 10, 0.85); /* Transparência geral */
-      --blur: blur(20px); /* Backdrop filter para efeito vidro fosco */
+:root {
+      --bg: #000000;
+      --bg2: #0f0f0f;
+      --surface: rgba(20, 20, 20, 0.78);
+      --border: rgba(255, 255, 255, 0.07);
+      --text: #ffffff;
+      --text2: #bbbbbb;
+      --accent: #00ff9d;
+      --accent2: #7c3aed;
+      --radius: 20px;
+      --header-h: 72px;
+      --footer-h: 48px;
+      --chat-w: 340px;
+      --transparent-bg: rgba(15, 15, 15, 0.82);
+      --blur: blur(24px);
+      --shadow-sm: 0 8px 32px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 20px 60px rgba(0, 0, 0, 0.65);
+      --transition: all 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      height: 100vh; 
+      overflow: hidden; 
+    }
+
+    header, footer { 
+      position: fixed; 
+      background: var(--transparent-bg); 
+      backdrop-filter: var(--blur); 
+      border-color: var(--border); 
+      z-index: 100; 
+    }
+
+    header { top: 0; height: var(--header-h); border-bottom: 1px solid var(--border); }
+    footer { bottom: 0; height: var(--footer-h); border-top: 1px solid var(--border); }
+
+    .logo { 
+      font-family: 'Silkscreen', system-ui; 
+      font-size: 38px; 
+      letter-spacing: 3px; 
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 20px;
+      color: var(--text);
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,0.11);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      background: var(--surface);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
+      padding: 40px;
+      width: 90%;
+      max-width: 720px;
+      max-height: 88vh;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.55s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
+      z-index: 1001;
+    }
+
+    .modal.active {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      padding: 16px 0;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: 0 16px 48px rgba(0,255,157,0.35);
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 99999;
+      pointer-events: none;
+    }
+
+    #toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; position: relative; }
@@ -221,9 +327,27 @@
 @media (max-width: 1100px) { #chat-selector {flex-direction: column;align-items: stretch;}
   #chat-selector select { flex: 1 1 auto;width: 100%;}
   #dual-chat-toggle { align-self: center;}}
+
+      #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #000;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      z-index: 99999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+
   <header id="header">
     <div class="logo silkscreen">TELAZONA</div>
     <button id="menu-btn"><i class="ph ph-list"></i></button>
@@ -241,6 +365,7 @@
       </div>
     </div>
   </header>
+
   <div id="mobile-menu">
     <button class="btn" id="mobile-add" data-t="addLive">+ Adicionar Live</button>
     <button class="btn" id="mobile-clear" data-t="clearLives"><i class="ph ph-trash"></i> Limpar Lives</button>
@@ -271,14 +396,14 @@
       <button class="btn" style="background:var(--accent);color:#000" id="confirm-add" data-t="add">Adicionar</button>
     </div>
   </div>
+
   <div id="featured-modal" class="modal">
     <h2 data-t="featuredTitle">Lives em Destaque</h2>
-    <div id="featured-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 20px;"></div>
-    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px">
-      <button class="btn" id="close-featured" data-t="close">Fechar</button>
-    </div>
+    <div id="featured-grid"></div>
+    <button class="btn" id="close-featured" data-t="close">Fechar</button>
   </div>
-  <div id="welcome-modal" class="modal">
+
+ <div id="welcome-modal" class="modal">
     <h1 class="silkscreen">TELAZONA</h1>
     <p style="text-align:center; font-size:1.4rem; margin:16px 0 32px;" data-t="welcomeText">Assista várias lives ao mesmo tempo!</p>
     <div class="steps">
@@ -324,8 +449,9 @@
       </div>
     </div>
   </footer>
+
 <script>
-  const trad = {
+    const trad = {
     pt: {
       addLive: "Adicionar Live", addLiveTitle: "Adicionar Live (YouTube, Twitch ou Kick)", addFirst: "Adicionar Primeira Live",
       donate: "Doar", help: "Ajuda", hideUI: "Ocultar Interface", showUI: "Mostrar Interface", showChat: "Mostrar Chat",
@@ -407,13 +533,62 @@ function t() {
   };
 
   // ───────────────────────────────────────────────
-  // 3. VARIÁVEIS GLOBAIS
+  // VARIÁVEIS GLOBAIS ADICIONAIS
   // ───────────────────────────────────────────────
-
-  let lives = [];
-  let dualMode = false;
+   let lives = [];
+  window.featuredLives = [];
+  window.addedFromGroups = {};   // chave = nome do grupo, valor = Set de URLs já adicionadas por ele
+ let dualMode = false;
   let controlTimer;
   let featuredLives = [];  // será preenchido pelo Supabase
+  // ───────────────────────────────────────────────
+  // MOSTRAR / ESCONDER BOTÕES DE DESTAQUE
+  // ───────────────────────────────────────────────
+  function updateFeaturedButtonVisibility() {
+    const hasFeatured = window.featuredLives && window.featuredLives.length > 0;
+    
+    const featuredBtn = document.getElementById("featured-btn");
+    const mobileFeatured = document.getElementById("mobile-featured");
+    
+    if (featuredBtn) featuredBtn.style.display = hasFeatured ? '' : 'none';
+    if (mobileFeatured) mobileFeatured.style.display = hasFeatured ? 'block' : 'none';
+  }
+
+  // ───────────────────────────────────────────────
+  // TOAST PERSONALIZADO
+  // ───────────────────────────────────────────────
+  function showToast(message, duration = 4000) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '80px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.background = 'rgba(0, 208, 132, 0.95)';
+    toast.style.color = '#000';
+    toast.style.padding = '12px 28px';
+    toast.style.borderRadius = '12px';
+    toast.style.zIndex = '99999';
+    toast.style.fontWeight = '600';
+    toast.style.fontSize = '1em';
+    toast.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    toast.style.pointerEvents = 'none';
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(-10px)';
+    }, 100);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%)';
+      setTimeout(() => toast.remove(), 500);
+    }, duration);
+  }
 
   // ───────────────────────────────────────────────
   // 4. FUNÇÕES AUXILIARES (extração, embed, modais, etc.)
@@ -587,39 +762,6 @@ function t() {
   }
 
   // ───────────────────────────────────────────────
-  // 6. RENDERIZAÇÃO DO MODAL DE DESTAQUES
-  // ───────────────────────────────────────────────
-
-  function renderFeatured() {
-    const grid = document.getElementById("featured-grid");
-    grid.innerHTML = "";
-
-    if (featuredLives.length === 0) {
-      grid.innerHTML = '<p style="text-align:center;color:var(--text2);">Nenhum destaque carregado ainda.</p>';
-      return;
-    }
-
-    featuredLives.forEach(group => {
-      const card = document.createElement("div");
-      card.style.background = "var(--bg2)";
-      card.style.border = "1px solid var(--border)";
-      card.style.borderRadius = "var(--radius)";
-      card.style.padding = "16px";
-      card.style.cursor = "pointer";
-      card.style.transition = "0.3s";
-      card.innerHTML = `<h3 style="margin-bottom: 8px;">${group.name}</h3><p>${group.lives.length} live${group.lives.length !== 1 ? 's' : ''}</p>`;
-      card.onmouseover = () => { card.style.background = "var(--accent)"; card.style.color = "#000"; };
-      card.onmouseout = () => { card.style.background = "var(--bg2)"; card.style.color = "#fff"; };
-      card.onclick = () => {
-        lives = [...lives, ...group.lives];
-        render();
-        fechar();
-      };
-      grid.appendChild(card);
-    });
-  }
-
-  // ───────────────────────────────────────────────
   // 7. URL PARAMS E PERSISTÊNCIA
   // ───────────────────────────────────────────────
 
@@ -681,8 +823,69 @@ function t() {
       localStorage.setItem("fullscreen_dica_mobile", "1");
     }
   }
-
+  
   // ───────────────────────────────────────────────
+  // RENDER DESTAQUES - SÓ ADICIONA O QUE É NOVO
+  // ───────────────────────────────────────────────
+  function renderFeatured() {
+    const grid = document.getElementById("featured-grid");
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    if (!Array.isArray(window.featuredLives) || window.featuredLives.length === 0) {
+      grid.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px 20px;">Nenhum destaque carregado ainda.</p>';
+      return;
+    }
+
+    window.featuredLives.forEach(group => {
+      const card = document.createElement("div");
+      card.style.background = "var(--bg2)";
+      card.style.border = "1px solid var(--border)";
+      card.style.borderRadius = "var(--radius)";
+      card.style.padding = "16px";
+      card.style.cursor = "pointer";
+      card.style.transition = "all 0.3s";
+
+      card.innerHTML = `
+        <h3 style="margin:0 0 8px 0;">${group.name}</h3>
+        <p style="margin:0;color:var(--text2);">${group.lives.length} live${group.lives.length !== 1 ? 's' : ''}</p>
+      `;
+
+      card.onclick = () => {
+        const groupName = group.name;
+        
+        // Inicializa registro desse grupo
+        if (!window.addedFromGroups[groupName]) {
+          window.addedFromGroups[groupName] = new Set();
+        }
+
+        const alreadyAdded = window.addedFromGroups[groupName];
+        const newLives = [];
+
+        group.lives.forEach(url => {
+          if (!alreadyAdded.has(url) && !lives.includes(url)) {
+            newLives.push(url);
+            alreadyAdded.add(url);
+          }
+        });
+
+        if (newLives.length > 0) {
+          lives = [...lives, ...newLives];
+          render();
+          showToast(`Adicionada${newLives.length > 1 ? 's' : ''} ${newLives.length} nova${newLives.length > 1 ? 's' : ''} live${newLives.length > 1 ? 's' : ''} do grupo "${groupName}"`);
+        } else {
+          showToast(`Todas as lives de "${groupName}" já estão na tela`);
+        }
+
+        fechar();
+      };
+
+      grid.appendChild(card);
+    });
+  }
+
+    // ───────────────────────────────────────────────
   // 9. EVENTOS DE INTERFACE
   // ───────────────────────────────────────────────
 
@@ -886,52 +1089,134 @@ function t() {
   // Carrega da URL e renderiza inicial
   loadFromURL();
   render();
-</script>
+    // ───────────────────────────────────────────────
+  // EXPOR VARIÁVEIS PARA O SUPABASE (importante!)
+  // ───────────────────────────────────────────────
+  window.el = el;
+window.featuredLives = [];
+    window.addedFromGroups = {};
 
-<!-- Supabase – separado e com type="module" -->
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-  const supabaseUrl    = 'https://xygmdunlrbtyslvkqvyr.supabase.co';
-  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5Z21kdW5scmJ0eXNsdmtxdnlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NjA2MTAsImV4cCI6MjA4NzAzNjYxMH0.F1WXVmQcrHylhBX8qg9LGwOAaPENhJbhl3wbI1PXP2o';
-
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-  async function loadFeaturedFromSupabase() {
-    try {
-      const { data, error } = await supabase
-        .from('featured')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-
-      featuredLives = data || [];
-      console.log('Featured lives do Supabase:', featuredLives.length, 'itens');
+    function updateFeaturedButtonVisibility() {
+      const has = window.featuredLives && window.featuredLives.length > 0;
+      const btn = document.getElementById("featured-btn");
+      const mobileBtn = document.getElementById("mobile-featured");
       
-      // Atualiza o modal se estiver aberto
-      if (el.featuredModal.classList.contains('active')) {
-        renderFeatured();
-      }
-    } catch (err) {
-      console.error('Erro Supabase:', err.message);
-      featuredLives = [];
+      if (btn) btn.style.display = has ? 'inline-flex' : 'none';
+      if (mobileBtn) mobileBtn.style.display = has ? 'block' : 'none';
     }
-  }
 
-  // Carrega ao iniciar
-  loadFeaturedFromSupabase();
+    function showToast(msg, dur = 3800) {
+      const t = document.createElement("div");
+      t.textContent = msg;
+      t.id = "toast";
+      document.body.appendChild(t);
+      setTimeout(() => t.classList.add("visible"), 50);
+      setTimeout(() => {
+        t.classList.remove("visible");
+        setTimeout(() => t.remove(), 500);
+      }, dur);
+    }
 
-  // Realtime: atualiza automaticamente quando alguém edita no Supabase
-  supabase
-    .channel('featured-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'featured' }, (payload) => {
-      console.log('Mudança em tempo real detectada!', payload);
-      loadFeaturedFromSupabase();
-      // Aqui você pode adicionar o toast se quiser
-      // showUpdateNotification(payload.new?.name || 'um card');
-    })
-    .subscribe();
-</script>
+    function renderFeatured() {
+      const grid = document.getElementById("featured-grid");
+      if (!grid) return;
+
+      grid.innerHTML = "";
+
+      if (!window.featuredLives || window.featuredLives.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px 20px;">Nenhum destaque carregado ainda.</p>';
+        return;
+      }
+
+      window.featuredLives.forEach(group => {
+        const card = document.createElement("div");
+        card.style.background = "var(--bg2)";
+        card.style.border = "1px solid var(--border)";
+        card.style.borderRadius = "var(--radius)";
+        card.style.padding = "16px";
+        card.style.cursor = "pointer";
+        card.style.transition = "all 0.3s";
+
+        card.innerHTML = `
+          <h3>${group.name}</h3>
+          <p>${group.lives.length} live${group.lives.length !== 1 ? 's' : ''}</p>
+        `;
+
+        card.onclick = () => {
+          const gname = group.name;
+          if (!window.addedFromGroups[gname]) window.addedFromGroups[gname] = new Set();
+
+          const added = window.addedFromGroups[gname];
+          const toAdd = group.lives.filter(u => !added.has(u) && !lives.includes(u));
+
+          if (toAdd.length) {
+            lives.push(...toAdd);
+            toAdd.forEach(u => added.add(u));
+            render();
+            showToast(`Adicionada${toAdd.length > 1 ? 's' : ''} ${toAdd.length} nova${toAdd.length > 1 ? 's' : ''} live${toAdd.length > 1 ? 's' : ''}`);
+          } else {
+            showToast(`Tudo de "${gname}" já está na tela`);
+          }
+          fechar();
+        };
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Atualiza visibilidade inicial
+    updateFeaturedButtonVisibility();
+
+    // Eventos dos botões
+    document.getElementById("featured-btn").onclick = () => {
+      renderFeatured();
+      abrir(el.featuredModal);
+    };
+
+    document.getElementById("mobile-featured").onclick = () => {
+      renderFeatured();
+      abrir(el.featuredModal);
+      document.getElementById("mobile-menu").classList.remove("open");
+    };
+  </script>
+
+  <!-- Supabase -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    const supabase = createClient(
+      'https://xygmdunlrbtyslvkqvyr.supabase.co',
+      'sb_publishable_QKG5wJZ-qqPrXzZo8wmrFg_LEsjBGff'
+    );
+
+    async function loadFeaturedFromSupabase() {
+      try {
+        const { data } = await supabase
+          .from('featured')
+          .select('*')
+          .order('name');
+
+        window.featuredLives = data || [];
+
+        renderFeatured();
+        updateFeaturedButtonVisibility();
+
+        if (data?.length > 0) {
+          showToast("Destaques atualizados! 🎉");
+        }
+      } catch (e) {
+        console.error('Erro ao carregar destaques:', e);
+      }
+    }
+
+    loadFeaturedFromSupabase();
+
+    supabase.channel('featured-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'featured' }, () => {
+        loadFeaturedFromSupabase();
+        showToast("Novos destaques carregados! 🎉");
+      })
+      .subscribe();
+  </script>
 </body>
 </html>
