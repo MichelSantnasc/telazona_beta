@@ -978,33 +978,34 @@ if (!hasLives) {
     wrapper.setAttribute('data-id', live.id);
 
     // ===== EMBED =====
-    let src = '';
+let src = '';
 
-    if (live.type === 'youtube') {
-      src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`;
-    }
+if (live.type === 'youtube') {
+  src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=0`;   // ← MUDE AQUI
+}
 
-    if (live.type === 'twitch') {
-      src = `https://player.twitch.tv/?channel=${live.id}&parent=${window.location.hostname}&autoplay=true&muted=true`;
-    }
+if (live.type === 'twitch') {
+  src = `https://player.twitch.tv/?channel=${live.id}&parent=${window.location.hostname}&autoplay=true&muted=true`;
+}
 
-    if (live.type === 'kick') {
-      src = `https://player.kick.com/${live.id}?muted=true`;
-    }
+if (live.type === 'kick') {
+  src = `https://player.kick.com/${live.id}?autoplay=true`;   // já estava bom
+}
 
-    wrapper.innerHTML = `
-      <div class="live-controls">
-        <button class="btn btn-icon delete-live">
-          <i class="ph ph-x"></i>
-        </button>
-      </div>
-<iframe 
-  src="${src}" 
-  allowfullscreen 
-  referrerpolicy="strict-origin-when-cross-origin"
-  sandbox="allow-scripts allow-same-origin allow-presentation allow-modals"
-  loading="lazy">
-</iframe>`;
+wrapper.innerHTML = `
+  <div class="live-controls">
+    <button class="btn btn-icon delete-live">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+  <iframe 
+    src="${src}" 
+    allowfullscreen 
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="autoplay; clipboard-write"           <!-- ← ADICIONE ESTA LINHA -->
+    sandbox="allow-scripts allow-same-origin allow-presentation allow-modals">
+  </iframe>
+`;
 
     // ===== DRAG =====
     wrapper.draggable = true;
