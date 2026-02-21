@@ -981,7 +981,7 @@ if (!hasLives) {
     let src = '';
 
     if (live.type === 'youtube') {
-      src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=1&rel=0`;
+      src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`;
     }
 
     if (live.type === 'twitch') {
@@ -998,12 +998,13 @@ if (!hasLives) {
           <i class="ph ph-x"></i>
         </button>
       </div>
-      <iframe 
-        src="${src}" 
-        allowfullscreen 
-        sandbox="allow-scripts allow-same-origin allow-presentation">
-      </iframe>
-    `;
+<iframe 
+  src="${src}" 
+  allowfullscreen 
+  referrerpolicy="strict-origin-when-cross-origin"
+  sandbox="allow-scripts allow-same-origin allow-presentation allow-modals"
+  loading="lazy">
+</iframe>`;
 
     // ===== DRAG =====
     wrapper.draggable = true;
