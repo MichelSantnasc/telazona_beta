@@ -31,8 +31,7 @@
 
 <!-- Tema navegador mobile -->
 <meta name="theme-color" content="#0f0f0f">
-<meta name="referrer" content="strict-origin-when-cross-origin">  
-
+  
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
@@ -979,34 +978,33 @@ if (!hasLives) {
     wrapper.setAttribute('data-id', live.id);
 
     // ===== EMBED =====
-let src = '';
+    let src = '';
 
 if (live.type === 'youtube') {
-  src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=0`;   // ← MUDE AQUI
+  src = `https://www.youtube.com/embed/${live.id}?autoplay=1&mute=1&rel=0&origin=${window.location.origin}`;
 }
 
-if (live.type === 'twitch') {
-  src = `https://player.twitch.tv/?channel=${live.id}&parent=${window.location.hostname}&autoplay=true&muted=true`;
-}
+    if (live.type === 'twitch') {
+      src = `https://player.twitch.tv/?channel=${live.id}&parent=${window.location.hostname}&autoplay=true&muted=true`;
+    }
 
-if (live.type === 'kick') {
-  src = `https://player.kick.com/${live.id}?autoplay=true`;   // já estava bom
-}
+    if (live.type === 'kick') {
+      src = `https://player.kick.com/${live.id}?muted=true`;
+    }
 
-wrapper.innerHTML = `
-  <div class="live-controls">
-    <button class="btn btn-icon delete-live">
-      <i class="ph ph-x"></i>
-    </button>
-  </div>
-  <iframe 
-    src="${src}" 
-    allowfullscreen 
-    referrerpolicy="strict-origin-when-cross-origin"
-    allow="autoplay; clipboard-write"           <!-- ← ADICIONE ESTA LINHA -->
-    sandbox="allow-scripts allow-same-origin allow-presentation allow-modals">
-  </iframe>
-`;
+    wrapper.innerHTML = `
+      <div class="live-controls">
+        <button class="btn btn-icon delete-live">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+<iframe 
+  src="${src}" 
+  allowfullscreen 
+  referrerpolicy="strict-origin-when-cross-origin"
+  sandbox="allow-scripts allow-same-origin allow-presentation allow-modals">
+</iframe>
+    `;
 
     // ===== DRAG =====
     wrapper.draggable = true;
